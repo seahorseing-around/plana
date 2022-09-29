@@ -81,9 +81,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+
       - name: Sleep for 60 seconds - wait fro container to come up
         run: sleep 60s
         shell: bash
+
+      - uses: hashicorp/setup-terraform@v2
 
       - name: Test connection
         run: curl -k $(terraform output alb_nginx_url)
