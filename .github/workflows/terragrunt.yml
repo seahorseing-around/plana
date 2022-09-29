@@ -53,7 +53,7 @@ jobs:
         with:
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'plan'
+          tf_actions_subcommand: 'plan -out=tfplan'
           tf_actions_working_dir: ${{ env.tf_working_dir }}
           tf_actions_comment: true
         env:
@@ -64,8 +64,16 @@ jobs:
         with:
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'apply'
+          tf_actions_subcommand: 'apply tfplan'
           tf_actions_working_dir: ${{ env.tf_working_dir }}
           tf_actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sleep for 60 seconds - wait fro container to come up
+        run: sleep 60s
+        shell: bash
+
+      - name: Test connection
+        run: curl -k $(terraform output -raw alb_nginx_url)
+        shell: bash
