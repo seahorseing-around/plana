@@ -75,5 +75,5 @@ jobs:
         shell: bash
 
       - name: Test connection
-        run: curl -k $(terraform output -raw alb_nginx_url)
+        run: curl -k $(terragrunt output alb_nginx_url)
         shell: bash
