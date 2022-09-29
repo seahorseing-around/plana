@@ -4,7 +4,7 @@ Plan A Devops case study
 # Objectives + Notes
 
 * Create a network with public & private subnets (please consider a meaningful CIDR).
-* Create a load balancer which redirects requests from port 80 to 443.
+* Create a load balancer which redirects requests from port ~~80 to 443~~ _clarified external comms should be encrypted and should read 443 -> 80._
 * Create an AWS ECS Fargate cluster and run 2 tasks there using a standard Nginx image(round-robin).
 * (Optional) Create a Blue/Green deployment pipeline (preferably using GitHub Actions) to deploy a new version of the image without downtime.
   * If you could not implement it: Explain the whole deployment process in a CI/CD pipeline, from code to production. You can make use of text, diagrams, slides, etc. The solution will be discussed during the interview.
@@ -12,18 +12,17 @@ Plan A Devops case study
 # Design
 * Not using S3 state - not part of task and will take longer to setup
 * Public & private subnet 
-  * small CIDR - 32 IP each - no indications more would be needed. 
-  * VPC -  laregr than required for all Subnets - but bad idea to not leave room for growth
+  * small CIDR - 32 IP each - is small but no indications more would be needed. 
+  * VPC -  larger than required for all Subnets - but bad idea to not leave room for growth
 * Internet gateway for access from internet
-  * Haven't used fargate before - determined need a Nat gateway to allow outbound access for fargate to retrieve NGinX Container from dockerhub
+  * *Haven't used fargate before - discovered need a Nat Gateway as well to allow outbound access for fargate to retrieve NGinX Container from dockerhub*
 * ALB in public subnet, listener on port 443 using Self signed cert
-  * Self signed cert will still give browser error but required allow TLS listener on ALB
-  * Routing to ALB on 
+  * *Self signed cert will still give browser error but required allow TLS listener on ALB*
 * Fargate in private subnets
 * NginX container running on port 80 (HTTP), 
   * default response = 302 so use that for ALB health check
 
-![Arch Diagram]('./PlanA Arch.drawio.svg')
+![Arch Diagram]('./PlanAArch.png')
 
 # Plan
 1. Implement TF manually for Subnets, Load Balancer & fargate Cluster
