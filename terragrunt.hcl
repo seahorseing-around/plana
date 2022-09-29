@@ -1,4 +1,6 @@
 
+iam_role = "arn:aws:iam::874843396208:role/ch-terragrunt-plana"
+
 remote_state {
   backend = "s3"
   generate = {
@@ -9,7 +11,7 @@ remote_state {
     bucket = "plana-tf-state"
     key = "${path_relative_to_include()}/plana.tfstate"
     region         = "eu-central-1"
-    encrypt        = true
+    encrypt        = false
     dynamodb_table = "tf-lock-table"
   }
 }
