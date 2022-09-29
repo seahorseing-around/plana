@@ -13,28 +13,28 @@ resource "aws_lb" "plana_lb" {
 
 # Output DNS of ALb - useful for quick test to heck availability
 output "alb_dns_test_url" {
-    value = format("https://%s/test",aws_lb.plana_lb.dns_name)
+  value = format("https://%s/test", aws_lb.plana_lb.dns_name)
 }
 
 output "alb_nginx_url" {
-    value = format("https://%s",aws_lb.plana_lb.dns_name)
+  value = format("https://%s", aws_lb.plana_lb.dns_name)
 }
 
-resource "aws_alb_listener" "alb_listener" {  
-  load_balancer_arn = aws_lb.plana_lb.id  
-  port              = "443"  
+resource "aws_alb_listener" "alb_listener" {
+  load_balancer_arn = aws_lb.plana_lb.id
+  port              = "443"
   protocol          = "HTTPS"
-  certificate_arn = aws_acm_certificate.acm_cert.arn
-  default_action {    
-    type             = "forward"    
-    target_group_arn = aws_alb_target_group.nginx_tg.id  
-    
+  certificate_arn   = aws_acm_certificate.acm_cert.arn
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.nginx_tg.id
+
   }
 }
 
 resource "aws_alb_target_group" "nginx_tg" {
   name_prefix = "nginx"
-  
+
   health_check {
     healthy_threshold   = "2"
     interval            = "30"
@@ -44,9 +44,9 @@ resource "aws_alb_target_group" "nginx_tg" {
     matcher             = "200-299,302" # Have seen healthy 302 as well as 200
   }
 
-  port     = "80"
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.plana_vpc.id
+  port        = "80"
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.plana_vpc.id
   target_type = "ip"
 }
 
@@ -54,21 +54,21 @@ resource "aws_alb_target_group" "nginx_tg" {
 # Not to be left in in production (can use tfvars to control this with count)
 # http://[alb dns]/test
 resource "aws_alb_listener_rule" "listener_rule" {
-  listener_arn = aws_alb_listener.alb_listener.id  
+  listener_arn = aws_alb_listener.alb_listener.id
   priority     = 10
-  action {    
-    type             = "fixed-response"  
+  action {
+    type = "fixed-response"
     fixed_response {
-      status_code   = "200"
-      content_type  = "text/plain"
-      message_body  = "ALB Operational"
+      status_code  = "200"
+      content_type = "text/plain"
+      message_body = "ALB Operational"
     }
-  }   
-  condition {    
+  }
+  condition {
     path_pattern {
       values = ["/test"]
     }
- 
+
   }
 }
 
@@ -79,18 +79,18 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = aws_vpc.plana_vpc.id
 
   ingress {
-    description      = "TLS from anywhere"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
+    description = "TLS from anywhere"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = [var.vpc_cidr]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.vpc_cidr]
   }
 
   tags = {

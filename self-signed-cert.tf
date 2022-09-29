@@ -10,7 +10,7 @@ resource "tls_self_signed_cert" "self_sign_cert" {
     organization = "AWS Spoof"
   }
 
-  validity_period_hours = 1000 
+  validity_period_hours = 1000
 
   allowed_uses = [
     "key_encipherment",

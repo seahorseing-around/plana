@@ -7,9 +7,9 @@ resource "aws_vpc" "plana_vpc" {
 
 # priv & pub created separately so they can be referenced individually
 resource "aws_subnet" "plana_public" {
-  for_each = var.pub_subnets
-  vpc_id     = aws_vpc.plana_vpc.id
-  cidr_block = each.value["cidr"]
+  for_each          = var.pub_subnets
+  vpc_id            = aws_vpc.plana_vpc.id
+  cidr_block        = each.value["cidr"]
   availability_zone = each.value["az"]
   tags = {
     Name = each.value["name"]
@@ -17,9 +17,9 @@ resource "aws_subnet" "plana_public" {
 }
 
 resource "aws_subnet" "plana_private" {
-  for_each = var.priv_subnets
-  vpc_id     = aws_vpc.plana_vpc.id
-  cidr_block = each.value["cidr"]
+  for_each          = var.priv_subnets
+  vpc_id            = aws_vpc.plana_vpc.id
+  cidr_block        = each.value["cidr"]
   availability_zone = each.value["az"]
   tags = {
     Name = each.value["name"]
@@ -38,9 +38,9 @@ resource "aws_internet_gateway" "plana_ig" {
 # used for outbound connectivity only 
 # not resiliant on one Subnet - would want to look at this soln in more detail
 resource "aws_nat_gateway" "plana_ng" {
-  subnet_id     = values(aws_subnet.plana_public)[0].id
+  subnet_id         = values(aws_subnet.plana_public)[0].id
   connectivity_type = "public"
-  allocation_id = aws_eip.plana_eip.id
+  allocation_id     = aws_eip.plana_eip.id
 
   tags = {
     Name = "PlanA gw NAT"
@@ -72,9 +72,9 @@ resource "aws_route_table" "plana_routes" {
 
 # Add route tp nat gateway for outbound internet traffic
 resource "aws_route" "ng_route" {
-  route_table_id            = aws_vpc.plana_vpc.main_route_table_id
-  destination_cidr_block    = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.plana_ng.id
+  route_table_id         = aws_vpc.plana_vpc.main_route_table_id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.plana_ng.id
 }
 
 # private subnets routed to main route table to grant access within VPC

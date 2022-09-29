@@ -20,7 +20,7 @@ variable "region" {
 variable "vpc_cidr" {
   type        = string
   description = "CIDR used for primary VPC."
-} 
+}
 
 variable "pub_subnets" {
   type        = map
