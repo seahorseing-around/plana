@@ -22,14 +22,14 @@ Plan A Devops case study
 * NginX container running on port 80 (HTTP), 
   * default response = 302 so use that for ALB health check
 
-![Arch Diagram]('./PlanAArch.png')
+![Arch Diagram](PlanAArch.svg)
 
 # Plan
-1. Implement TF manually for Subnets, Load Balancer & fargate Cluster
-2. Setup Github action to deploy
-3. Expand setup to implement blue/green
+- [x] Implement TF manually for Subnets, Load Balancer & fargate Cluster  
+- [x] Setup Github action to deploy
+- [ ] Expand setup to implement blue/green
    * Will require 2 sets of TF - one for ALB & Subnets + one for B&G clusters
-   * 
+   * Note that the fargate likely has actions to roll container instances
 
 # Notes
 * Security setup
@@ -45,7 +45,6 @@ Plan A Devops case study
     * S3 full access
     * DynamoDB full access
     * ACM Full Access
-
-Deployed to:
-* Account = 874843396208
-* user = craigmhawes
+* Deployed to:
+  * Account = 874843396208
+  * user = craigmhawes
