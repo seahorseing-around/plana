@@ -23,12 +23,12 @@ variable "vpc_cidr" {
 }
 
 variable "pub_subnets" {
-  type        = map
+  type        = map(string)
   description = "Public Subnet Definitions."
 }
 
 variable "priv_subnets" {
-  type        = map
+  type        = map(string)
   description = "Private Subnet Definitions."
 }
 
