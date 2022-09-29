@@ -75,7 +75,7 @@ jobs:
         with:
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'output alb_nginx_url'
+          tf_actions_subcommand: 'output'
           tf_actions_working_dir: ${{ env.tf_working_dir }}
           tf_actions_comment: true
         env:
