@@ -33,5 +33,5 @@ tfplan
 .github/workflows/*
 
 # Add TF docs that are managed by Terragrunt
-backend.tf
-provider.tf
+#backend.tf
+#provider.tf
