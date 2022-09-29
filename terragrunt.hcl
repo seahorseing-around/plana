@@ -36,8 +36,7 @@ terraform {
 
     arguments = [
       "-var-file=environment.tfvars",
-      "-var-file=general.tfvars",
-      "-out=tfplan"
+      "-var-file=general.tfvars"
     ]
   }
 }
