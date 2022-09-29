@@ -82,7 +82,6 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sleep for 60 seconds - wait fro container to come up
-        uses: the-commons-project/terragrunt-github-actions@master
         run: sleep 60s
         shell: bash
 
