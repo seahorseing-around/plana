@@ -70,16 +70,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-#      - name: 'Terragrunt Output URL'
-#        uses: the-commons-project/terragrunt-github-actions@master
-#        with:
-#          tf_actions_version: ${{ env.tf_version }}
-#          tg_actions_version: ${{ env.tg_version }}
-#          tf_actions_subcommand: 'output alb_nginx_url'
-#          tf_actions_working_dir: ${{ env.tf_working_dir }}
-#          tf_actions_comment: true
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Terragrunt Output URL'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'output alb_nginx_url'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Sleep for 60 seconds - wait fro container to come up
         run: sleep 60s
