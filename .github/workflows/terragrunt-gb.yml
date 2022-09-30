@@ -28,7 +28,7 @@ jobs:
       - name: Setup Terragrunt
         uses: peter-murray/terragrunt-github-action@v1.0.0
         with:
-          terragrunt_version: latest
+          terragrunt_version: 0.39.0
       
       - name: Interact with Terragrunt
         run: terragrunt --version 
