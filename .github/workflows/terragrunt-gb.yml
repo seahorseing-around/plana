@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Define Target and Current'
-        if: ${{ inputs.deploy-target == "blue" }} # have assumed current is blue - if chose to deploy blue current must be green
+        if: ${{ inputs.deploy-target == blue }} # have assumed current is blue - if chose to deploy blue current must be green
         run: |
           export CURRENT_ENV=green
         shell: bash
