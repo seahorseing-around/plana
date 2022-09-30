@@ -26,14 +26,30 @@ resource "aws_alb_listener" "alb_listener" {
   protocol          = "HTTPS"
   certificate_arn   = aws_acm_certificate.acm_cert.arn
   default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.nginx_tg.id
+    type = "forward"
+    forward {
+      target_group {
+        arn    = aws_alb_target_group.nginx_tg.id
+        weight = lookup(var.traffic_dist_map[var.mode], "blue")
+      }
+
+      target_group {
+        arn    = aws_alb_target_group.squid_tg.id
+        weight = lookup(var.traffic_dist_map[var.mode], "green")
+      }
+
+      stickiness {
+        enabled  = false
+        duration = 1
+      }
+    }
+
 
   }
 }
 
 resource "aws_alb_target_group" "nginx_tg" {
-  name_prefix = "nginx"
+  name_prefix = "blue"
 
   health_check {
     healthy_threshold   = "2"
@@ -41,10 +57,28 @@ resource "aws_alb_target_group" "nginx_tg" {
     protocol            = "HTTP"
     timeout             = "3"
     unhealthy_threshold = "4"
-    matcher             = "200-299,302" # Have seen healthy 302 as well as 200
+    matcher             = "200-299,302,400-499" # Have seen healthy 302 as well as 200
   }
 
   port        = "80"
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.plana_vpc.id
+  target_type = "ip"
+}
+
+resource "aws_alb_target_group" "squid_tg" {
+  name_prefix = "green"
+
+  health_check {
+    healthy_threshold   = "2"
+    interval            = "30"
+    protocol            = "HTTP"
+    timeout             = "3"
+    unhealthy_threshold = "4"
+    matcher             = "200-299,302,400-499" # Squid returns 400's
+  }
+
+  port        = "3128"
   protocol    = "HTTP"
   vpc_id      = aws_vpc.plana_vpc.id
   target_type = "ip"

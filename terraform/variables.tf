@@ -32,9 +32,24 @@ variable "priv_subnets" {
   description = "Private Subnet Definitions."
 }
 
+variable "traffic_dist_map" {
+  type        = map(any)
+  description = "ALB traffic weighting"
+}
+
+variable "mode" {
+  type        = string
+  description = "Mode of traffic routing, must be a value from traffic_dist_map"
+}
+
 variable "num_tasks" {
-  type        = number
+  type        = map(any)
   description = "Number of desired cntainer tasks"
+}
+
+variable "tasks" {
+  type        = string
+  description = "Task distribution to choose"
 }
 
 variable "deploy_role" {

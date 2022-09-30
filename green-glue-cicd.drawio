@@ -1,0 +1,85 @@
+<mxfile host="65bd71144e">
+    <diagram id="yFZP4ob7aZLUd7v5w4JK" name="Page-1">
+        <mxGraphModel dx="859" dy="566" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="Simple CICD for Green Blue" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontal=1;startSize=20;horizontalStack=0;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="60" width="1000" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Deploy State" style="swimlane;startSize=20;horizontal=0;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="3">
+                    <mxGeometry y="20" width="1000" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="2x Target Group&lt;br&gt;2 x services, one is scaled to 0 tasks, one TG is unhealthy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ABABAB;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="4">
+                    <mxGeometry x="40" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="2x Target Group&lt;br&gt;2 x services, one healthy, one initialising" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ABABAB;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="4">
+                    <mxGeometry x="200" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="2x Target Group&lt;br&gt;2 x services, both scaled up, both&amp;nbsp; healthy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ABABAB;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="4">
+                    <mxGeometry x="410" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="2x Target Group&lt;br&gt;2 x services, one is scaled to 0 tasks, one TG is unhealthy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ABABAB;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="4">
+                    <mxGeometry x="690" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="G/B deploy Job" style="swimlane;startSize=20;horizontal=0;strokeColor=#000000;fontColor=#000000;" vertex="1" parent="3">
+                    <mxGeometry y="140" width="1000" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="7" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Deploy new service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="40" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="9" target="11">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Increase task size to 2" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="180" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="" style="edgeStyle=none;html=1;startArrow=none;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="22" target="13">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Poll for Health of Target Group" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="320" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="13" target="15">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Change routing proportions" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="530" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="15" target="25">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Reduce old service to no tasks" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="680" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=none;html=1;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="11" target="11">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="400" y="110"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="Unhealthy" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];strokeColor=#000000;fontColor=#000000;" vertex="1" connectable="0" parent="20">
+                    <mxGeometry x="-0.333" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="Healthy" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=#000000;fillColor=none;fontColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="450" y="60" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;fontColor=#000000;" edge="1" parent="5" source="11" target="22">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="480" y="260" as="sourcePoint"/>
+                        <mxPoint x="570" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="Check service still healthy" style="whiteSpace=wrap;html=1;rounded=0;fillColor=#3399FF;fontColor=#000000;strokeColor=#000000;" vertex="1" parent="5">
+                    <mxGeometry x="840" y="30" width="120" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
