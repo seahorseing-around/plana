@@ -25,6 +25,14 @@ jobs:
     name: 'Blue/Green Switch'
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Terragrunt
+        uses: peter-murray/terragrunt-github-action@v1.0.0
+        with:
+          terragrunt_version: latest
+      
+      - name: Interact with Terragrunt
+        run: terragrunt --version 
+
       - name: 'Define Target and Current'
         if: ${{ inputs.deploy-target == 'blue' }} # have assumed current is blue - if chose to deploy blue current must be green
         run: |
