@@ -25,6 +25,9 @@ jobs:
     name: 'Blue/Green Switch'
     runs-on: ubuntu-latest
     steps:
+      - name: 'Checkout'
+        uses: actions/checkout@master
+
       - name: Setup Terragrunt
         uses: peter-murray/terragrunt-github-action@v1.0.0
         with:
@@ -39,18 +42,13 @@ jobs:
           export CURRENT_ENV=green
         shell: bash
 
-      - name: 'Checkout'
-        uses: actions/checkout@master
-
       - name: 'Terragrunt Init'
-        run: |
-          cd ./terraform
-          terragrunt init
+        run: terragrunt init -chdir=terraform
 
       - name: 'Stand up Target' # Start task on target, set target desired = 2
         run: |
-          terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' 
-          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' -auto-approve
+          terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' -chdir=terraform
+          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' -auto-approve -chdir=terraform
 
       - name: 'Poll TG (AWS CLI) until Healthy'
         # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
