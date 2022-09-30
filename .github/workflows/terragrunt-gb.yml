@@ -51,7 +51,7 @@ jobs:
         run: |
           cd ./terraform
           terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' 
-          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' -auto-approve
+          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' --terragrunt-no-auto-approve 
 
       - name: 'Poll TG (AWS CLI) until Healthy'
         # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
@@ -60,25 +60,11 @@ jobs:
         run: sleep 60s
         shell: bash
 
-      - name: 'Terragrunt Plan Switch Traffic'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'plan -var mode=${{ env.TARGET_ENV }} -var tasks=both' # change ALB routing from Current -> Target
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 'Terragrunt Apply Switch Traffic'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'apply -var mode=${{ env.TARGET_ENV }} -var tasks=both'
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Terragrunt Plan Switch Traffic' # change ALB routing from Current -> Target
+        run: |
+          cd ./terraform
+          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=both' 
+          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=both' --terragrunt-no-auto-approve 
 
       - name: 'Poll Service check Healthy'
         # Same as above - don't know the ALB URL here. Service should come up healthy immediately then we can shutdown Blue
@@ -86,22 +72,8 @@ jobs:
         run: sleep 1s # should be curl -k https://[ALB]
         shell: bash
 
-      - name: 'Terragrunt Plan stop Old Env'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'plan -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' # Stop Old tasks (cost saving)
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: 'Terragrunt Apply Stop OLD Env'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'apply -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}'
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Terragrunt Plan stop Old Env' # Stop Old tasks (cost saving)
+        run: |
+          cd ./terraform
+          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' 
+          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' --terragrunt-no-auto-approve 
