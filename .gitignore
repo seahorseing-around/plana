@@ -30,7 +30,7 @@ override.tf.json
 plan
 tfplan
 
-.github/workflows/*
+!.github/workflows/*
 
 # Add TF docs that are managed by Terragrunt
 backend.tf

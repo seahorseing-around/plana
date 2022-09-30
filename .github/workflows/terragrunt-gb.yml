@@ -1,0 +1,122 @@
+name: 'Deploy Green -> Blue'
+on:
+  workflow_dispatch:
+    inputs:
+      deploy-target:
+          description: 'What Stack should be deployed'
+          required: true
+          type: choice
+          options:
+          - blue
+          - green
+
+env:
+  tf_version: 'latest'
+  tg_version: 'latest'
+  tf_working_dir: '.'
+  AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: "eu-central-1"
+  TARGET_ENV: ${{ inputs.deploy-target }}
+  CURRENT_ENV: "blue"
+
+jobs:
+  switch:
+    name: 'Blue/Green Switch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Define Target and Current'
+        if: ${{ inputs.deploy-target == "blue" }} # have assumed current is blue - if chose to deploy blue current must be green
+        run: |
+          export CURRENT_ENV=green
+        shell: bash
+
+      - name: 'Checkout'
+        uses: actions/checkout@master
+
+      - name: 'Terragrunt Init'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: 'Terragrunt Plan Stand up Target'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' # Start task on target, set target desired = 2
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
+      - name: 'Terragrunt Apply Stand up Target'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Poll TG (AWS CLI) until Healthy'
+        # Would use the AWS CLI here but using these terragrunt actions I don't have access to the output (for target Group ARN)
+        # Expect it to be possible - but not going to dig that far into TerraGrunt actions now
+        # Instead for the purposes of demo simply wai t 60 seoconds and should be up.
+        # Would have a time out where abandon job and raise error
+        run: sleep 60s
+        shell: bash
+
+      - name: 'Terragrunt Plan Switch Traffic'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'plan -var mode=${{ env.TARGET_ENV }} -var tasks=both' # change ALB routing from Current -> Target
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terragrunt Apply Switch Traffic'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'apply -var mode=${{ env.TARGET_ENV }} -var tasks=both'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Poll Service check Healthy'
+        # Same as above - don't know the ALB URL here. Service should come up healthy immediately then we can shutdown Blue
+        #  If not switch routing back to Blue and raise error
+        run: sleep 1s # should be curl -k https://[ALB]
+        shell: bash
+
+      - name: 'Terragrunt Plan stop Old Env'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'plan -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' # Stop Old tasks (cost saving)
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Terragrunt Apply Stop OLD Env'
+        uses: the-commons-project/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'apply -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
