@@ -43,42 +43,18 @@ jobs:
         uses: actions/checkout@master
 
       - name: 'Terragrunt Init'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-          tf_actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          cd ./terraform
+          terragrunt init
 
-      - name: 'Terragrunt Plan Stand up Target'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' # Start task on target, set target desired = 2
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
- 
-      - name: 'Terragrunt Apply Stand up Target'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both'
-          tf_actions_working_dir: ${{ env.tf_working_dir }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Stand up Target' # Start task on target, set target desired = 2
+        run: |
+          terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' 
+          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' -auto-approve
 
       - name: 'Poll TG (AWS CLI) until Healthy'
-        # Would use the AWS CLI here but using these terragrunt actions I don't have access to the output (for target Group ARN)
-        # Expect it to be possible - but not going to dig that far into TerraGrunt actions now
-        # Instead for the purposes of demo simply wai t 60 seoconds and should be up.
+        # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
+        # Instead for the purposes of demo simply wait 60 seoconds and should be up.
         # Would have a time out where abandon job and raise error
         run: sleep 60s
         shell: bash
