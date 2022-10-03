@@ -61,7 +61,7 @@ jobs:
         run: |
           cd ./terraform
           terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=both 
-          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=both --terragrunt-no-auto-approve 
+          echo "yes" | terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=both
 
       - name: 'Poll Service check Healthy'
         # Same as above - don't know the ALB URL here. Service should come up healthy immediately then we can shutdown Blue
@@ -72,5 +72,5 @@ jobs:
       - name: 'Terragrunt Plan stop Old Env' # Stop Old tasks (cost saving)
         run: |
           cd ./terraform
-          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' 
-          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}' --terragrunt-no-auto-approve 
+          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}
+          echo "yes" | terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=${{ env.TARGET_ENV }}
