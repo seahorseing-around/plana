@@ -11,9 +11,6 @@ on:
           - green
 
 env:
-  tf_version: 'latest'
-  tg_version: 'latest'
-  tf_working_dir: './terraform/'
   AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: "eu-central-1"
@@ -50,8 +47,8 @@ jobs:
       - name: 'Stand up Target' # Start task on target, set target desired = 2
         run: |
           cd ./terraform
-          terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both' 
-          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both' --terragrunt-no-auto-approve 
+          terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both 
+          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both --terragrunt-no-auto-approve 
 
       - name: 'Poll TG (AWS CLI) until Healthy'
         # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
@@ -63,8 +60,8 @@ jobs:
       - name: 'Terragrunt Plan Switch Traffic' # change ALB routing from Current -> Target
         run: |
           cd ./terraform
-          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=both' 
-          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=both' --terragrunt-no-auto-approve 
+          terragrunt plan -var mode=${{ env.TARGET_ENV }} -var tasks=both 
+          terragrunt apply -var mode=${{ env.TARGET_ENV }} -var tasks=both --terragrunt-no-auto-approve 
 
       - name: 'Poll Service check Healthy'
         # Same as above - don't know the ALB URL here. Service should come up healthy immediately then we can shutdown Blue
