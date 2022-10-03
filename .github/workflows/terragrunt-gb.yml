@@ -55,6 +55,7 @@ jobs:
         # Instead for the purposes of demo simply wait 30 seoconds and app should be up.
         # n.b. Would also need logic for a time out to abandon job and raise error if it takes too long
         run: |
+          cd ./terraform
           curl -k -s -o /dev/null -w "%{http_code}" $(terragrunt output -raw alb_nginx_url)
           sleep 30
 
