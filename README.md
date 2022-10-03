@@ -1,8 +1,7 @@
-# plana
+# Plan A
 Plan A Devops case study
 
-# Objectives + Notes
-
+# Objectives
 * Create a network with public & private subnets (please consider a meaningful CIDR).
 * Create a load balancer which redirects requests from port ~~80 to 443~~ _clarified external comms should be encrypted and should read 443 -> 80._
 * Create an AWS ECS Fargate cluster and run 2 tasks there using a standard Nginx image(round-robin).
@@ -27,9 +26,7 @@ Plan A Devops case study
 # Plan
 - [x] Implement TF manually for Subnets, Load Balancer & fargate Cluster  
 - [x] Setup Github action to deploy
-- [ ] Expand setup to implement blue/green
-   * Will require 2 sets of TF - one for ALB & Subnets + one for B&G clusters
-   * Note that the fargate likely has actions to roll container instances
+- [x] Expand setup to implement blue/green
 
 # Notes
 * Security setup
@@ -57,6 +54,9 @@ Plan A Devops case study
 
 
 # Notes on Blue/Green
+![Blue/Green Approach](green-blue-cicd.png.svg)
+* See diagram for strategy - in short using the ALB routing to ensure 0-downtime
 * Code has been split into modules, with more time only the relevant module would be run for standing up the target env (ECS module), and making the switch (core). I understand Terragrunt has useful features in this space but I am not yet that familiar with it.
+* Have temporarily used a Squid container in the Green  stack - to easily test/show that the B/G switch is working. Ideally there would be a visible mechanism to test (e.g. version number in response content somewhere)
 * The blue/green Target Groups & ECS Services are currently individally specified in Terraform for demo purposes + time spent. This approach can suit some situations/ teams / ways of managing source control but I would generally rather have a single block of relevant TF that a blue/green variable can be fed into. This removes duplication and removes the risk of divergence between them.
-* Manually feeding in Blue or green to a manual job is a shortcut for teh purposes of the exercise - the system should remember (or work out with CLI) what is currenty live and make the alternative the target
+* For Job setup I am manually feeding in Blue or green to a manual job is a shortcut for the purposes of the exercise - the system should remember (or work out with CLI) what is currenty live and automatically make the alternative the target
