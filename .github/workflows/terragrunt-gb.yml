@@ -51,10 +51,14 @@ jobs:
           echo "yes" | terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both 
 
       - name: 'Poll TG (AWS CLI) until Healthy'
-        # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
-        # Instead for the purposes of demo simply wait 60 seoconds and should be up.
-        # Would have a time out where abandon job and raise error
-        run: sleep 60s
+        # Have included a way of polling for status code - havent written logic for waiting & retrying until helathy
+        # Instead for the purposes of demo simply wait 30 seoconds and app should be up.
+        # n.b. Would also need logic for a time out to abandon job and raise error if it takes too long
+        run: |
+          status_code=$(curl -k -s -o /dev/null -w "%{http_code}" $(terragrunt output -raw alb_nginx_url))
+          echo $status_code
+          sleep 30
+
         shell: bash
 
       - name: 'Terragrunt Plan Switch Traffic' # change ALB routing from Current -> Target
