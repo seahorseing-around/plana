@@ -53,7 +53,7 @@ resource "aws_alb_target_group" "nginx_tg" {
 
   health_check {
     healthy_threshold   = "2"
-    interval            = "600"
+    interval            = "300"
     protocol            = "HTTP"
     timeout             = "3"
     unhealthy_threshold = "4"
@@ -71,7 +71,7 @@ resource "aws_alb_target_group" "squid_tg" {
 
   health_check {
     healthy_threshold   = "2"
-    interval            = "600"
+    interval            = "300"
     protocol            = "HTTP"
     timeout             = "3"
     unhealthy_threshold = "4"

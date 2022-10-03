@@ -3,11 +3,11 @@ output "cluster_id" {
 }
 
 output "green_tg" {
-    value = aws_alb_target_group.nginx_tg.id
+    value = aws_alb_target_group.squid_tg.id
 }
 
 output "blue_tg" {
-    value = aws_alb_target_group.squid_tg.id
+    value = aws_alb_target_group.nginx_tg.id
 }
 
 output "ecs_sg" {

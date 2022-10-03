@@ -1,5 +1,5 @@
 resource "aws_ecs_task_definition" "nginx_task" {
-  family                   = "${var.app_name}-service-family"
+  family                   = "nginx-bl-service-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
@@ -22,7 +22,7 @@ resource "aws_ecs_task_definition" "nginx_task" {
 }
 
 resource "aws_ecs_service" "nginx_service" {
-  name             = "${var.app_name}_nginx_service"
+  name             = "${var.app_name}_nginx_bl_service"
   cluster          = var.cluster_id
   task_definition  = aws_ecs_task_definition.nginx_task.id
   desired_count    = lookup(var.num_tasks[var.tasks], "blue")
@@ -44,7 +44,7 @@ resource "aws_ecs_service" "nginx_service" {
 
 
 resource "aws_ecs_task_definition" "squid_task" {
-  family                   = "squid-service-family"
+  family                   = "squid-gr-service-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
@@ -68,7 +68,7 @@ resource "aws_ecs_task_definition" "squid_task" {
 
 
 resource "aws_ecs_service" "squid_service" {
-  name             = "squid_nginx_service"
+  name             = "plana_squid_gr_service"
   cluster          = var.cluster_id
   task_definition  = aws_ecs_task_definition.squid_task.id
   desired_count    = lookup(var.num_tasks[var.tasks], "green")

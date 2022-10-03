@@ -36,7 +36,7 @@ traffic_dist_map = {
     blue  = 90
     green = 10
   }
-  split = {
+  both = {
     blue  = 50
     green = 50
   }
