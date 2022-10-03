@@ -48,7 +48,7 @@ jobs:
         run: |
           cd ./terraform
           terragrunt plan -var mode=${{ env.CURRENT_ENV }} -var tasks=both 
-          terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both 
+          echo "yes" | terragrunt apply -var mode=${{ env.CURRENT_ENV }} -var tasks=both 
 
       - name: 'Poll TG (AWS CLI) until Healthy'
         # Would use the AWS CLI here but not in scope to work out QS CLI from here + would need output of TG ARN
