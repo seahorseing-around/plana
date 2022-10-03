@@ -2,14 +2,14 @@ resource "aws_ecs_task_definition" "nginx_task" {
   family                   = "nginx-bl-service-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 512
-  memory                   = 2048
+  cpu       = 256
+  memory    = 512
   container_definitions = jsonencode([
     {
       name      = "nginx-app"
       image     = "nginx:latest"
-      cpu       = 512
-      memory    = 2048
+      cpu       = 256
+      memory    = 512
       essential = true # if true and if fails, all other containers fail. Must have at least one essential
       portMappings = [
         {
@@ -47,14 +47,14 @@ resource "aws_ecs_task_definition" "squid_task" {
   family                   = "squid-gr-service-family"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 512
-  memory                   = 2048
+  cpu       = 256
+  memory    = 512
   container_definitions = jsonencode([
     {
       name      = "squid"
       image     = "ubuntu/squid:latest"
-      cpu       = 512
-      memory    = 2048
+      cpu       = 256
+      memory    = 512
       essential = true # if true and if fails, all other containers fail. Must have at least one essential
       portMappings = [
         {
