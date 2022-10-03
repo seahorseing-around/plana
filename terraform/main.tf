@@ -20,3 +20,7 @@ module "ecs" {
   ecs_sg       = module.core.ecs_sg
   priv_subnets = module.core.priv_subnets
 }
+
+output "alb_nginx_url" {
+  value = module.core.alb_nginx_url
+}
