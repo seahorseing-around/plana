@@ -26,4 +26,4 @@ jobs:
       - name: 'Apply Destroy' # Start task on target, set target desired = 2
         run: |
           cd ./terraform
-          terragrunt destroy -var-file=environment.tfvars -var-file=general.tfvars
+          terragrunt destroy -var-file=environment.tfvars -var-file=general.tfvars -var mode=both -var tasks=both 
